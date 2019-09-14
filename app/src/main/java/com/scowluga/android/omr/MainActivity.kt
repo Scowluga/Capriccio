@@ -11,7 +11,8 @@ import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,15 +24,13 @@ class MainActivity : AppCompatActivity() {
 
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            VolleyManager.sendJsonRequest(this@MainActivity)
-//            val intent = Intent().apply {
-//                type = "image/*"
-//                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-//                action = Intent.ACTION_GET_CONTENT
-//            }
-//            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE)
+            val intent = Intent().apply {
+                type = "image/*"
+                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                action = Intent.ACTION_GET_CONTENT
+            }
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE)
         }
-
     }
 
     private fun Uri.asBitmap(activity: Activity) = MediaStore.Images.Media.getBitmap(activity.contentResolver, this)
@@ -43,18 +42,23 @@ class MainActivity : AppCompatActivity() {
                 || data?.clipData == null) return
 
         val ll = findViewById<LinearLayout>(R.id.linearLayout)
+        val jsonObject = JSONObject()
+        val jsonArray = JSONArray()
+        jsonObject.put("image_links", jsonArray)
 
         for (i in 0 until data.clipData.itemCount) {
             val uri = data.clipData.getItemAt(i).uri
+            val bitmap = uri.asBitmap(this@MainActivity)
 
+            // display on LinearLayout
             val imageView = ll.getChildAt(i) as? ImageView ?: continue
             imageView.visibility = View.VISIBLE
-            imageView.setImageBitmap(uri.asBitmap(this@MainActivity))
+            imageView.setImageBitmap(bitmap)
+
+            // add to jsonArray
+            jsonArray.put(CloudinaryManager.translateToURL(bitmap))
         }
-    }
 
-    fun whee() {
-
-
+        VolleyManager.sendJsonRequest(jsonObject, this@MainActivity)
     }
 }
