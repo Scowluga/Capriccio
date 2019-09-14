@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".dialog.DialogActivity"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:background="@drawable/dialog_background"
+        android:id="@+id/container"
+
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+
+        android:transitionName="@string/transition_dialog"
+        android:elevation="@dimen/dialog_elevation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="8dp">
+
+            <TextView
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="Add Sheet Music"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-medium"
+                />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </EditText>
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/button_file"
+                android:text="Select File"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Colored"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/buttonPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="54dip"
+            android:orientation="vertical" >
+            <LinearLayout
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="4dip"
+                android:paddingStart="2dip"
+                android:paddingEnd="2dip"
+                android:measureWithLargestChild="true">
+                <LinearLayout android:id="@+id/leftSpacer"
+                    android:layout_weight="0.25"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
+                <Button android:id="@+id/button1"
+                    android:layout_width="0dip"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:maxLines="2"
+                    android:layout_height="wrap_content" />
+                <Button android:id="@+id/button3"
+                    android:layout_width="0dip"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:maxLines="2"
+                    android:text="Cancel"
+                    android:layout_height="wrap_content" />
+                <Button android:id="@+id/button2"
+                    android:layout_width="0dip"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:text="Add"
+                    android:maxLines="2"
+                    android:layout_height="wrap_content" />
+                <LinearLayout android:id="@+id/rightSpacer"
+                    android:layout_width="0dip"
+                    android:layout_weight="0.25"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</FrameLayout>
