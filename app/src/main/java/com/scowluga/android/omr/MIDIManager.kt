@@ -11,6 +11,5 @@ class MIDIManager {
         fun playMusic(jsonObject: JSONObject) {
 
         }
-
     }
 }

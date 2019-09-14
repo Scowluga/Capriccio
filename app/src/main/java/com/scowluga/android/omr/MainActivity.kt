@@ -6,17 +6,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.content.Intent
 import android.graphics.Bitmap
-import android.provider.MediaStore
-import android.net.Uri
-import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
-import org.json.JSONArray
 import org.json.JSONObject
-import android.R.attr.bitmap
-import android.media.Image
-import android.util.Base64
-import java.io.ByteArrayOutputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,10 +19,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.upload_images).setOnClickListener {
+        findViewById<Button>(R.id.button).setOnClickListener {
             val intent = Intent().apply {
                 type = "image/*"
-//                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 action = Intent.ACTION_GET_CONTENT
             }
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE)
@@ -42,19 +32,14 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != REQUEST_CODE
                 || resultCode != Activity.RESULT_OK
-                || data?.clipData == null) return
+                || data?.data == null) return
 
-        val jsonObject = JSONObject()
+        val bitmap = UtilTypeConverters.UriToBitmap(data.data, this)
+        VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
+    }
 
-        for (i in 0 until data.clipData.itemCount) {
-            val uri = data.clipData.getItemAt(i).uri
-            val bitmap = MyUtil.UriToBitmap(uri, this)
-
-
-
-            // upload to server
-            jsonObject.put("image", bitmap)
-            VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
-        }
+    fun resultFromServer(bitmap: Bitmap, jsonObject: JSONObject) {
+        findViewById<ImageView>(R.id.image_view).setImageBitmap(bitmap)
+        MIDIManager.playMusic(jsonObject)
     }
 }
