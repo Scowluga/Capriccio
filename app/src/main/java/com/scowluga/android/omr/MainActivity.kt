@@ -13,27 +13,30 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import org.json.JSONArray
 import org.json.JSONObject
+import android.R.attr.bitmap
+import android.media.Image
+import android.util.Base64
+import java.io.ByteArrayOutputStream
+
 
 class MainActivity : AppCompatActivity() {
-
-    private val REQUEST_CODE = 1
+    companion object {
+        private val REQUEST_CODE = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val button = findViewById<Button>(R.id.button)
-        button.setOnClickListener {
+        findViewById<Button>(R.id.upload_images).setOnClickListener {
             val intent = Intent().apply {
                 type = "image/*"
-                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+//                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 action = Intent.ACTION_GET_CONTENT
             }
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE)
         }
     }
-
-    private fun Uri.asBitmap(activity: Activity) = MediaStore.Images.Media.getBitmap(activity.contentResolver, this)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -41,24 +44,17 @@ class MainActivity : AppCompatActivity() {
                 || resultCode != Activity.RESULT_OK
                 || data?.clipData == null) return
 
-        val ll = findViewById<LinearLayout>(R.id.linearLayout)
         val jsonObject = JSONObject()
-        val jsonArray = JSONArray()
-        jsonObject.put("image_links", jsonArray)
 
         for (i in 0 until data.clipData.itemCount) {
             val uri = data.clipData.getItemAt(i).uri
-            val bitmap = uri.asBitmap(this@MainActivity)
+            val bitmap = MyUtil.UriToBitmap(uri, this)
 
-            // display on LinearLayout
-            val imageView = ll.getChildAt(i) as? ImageView ?: continue
-            imageView.visibility = View.VISIBLE
-            imageView.setImageBitmap(bitmap)
 
-            // add to jsonArray
-            jsonArray.put(CloudinaryManager.translateToURL(bitmap))
+
+            // upload to server
+            jsonObject.put("image", bitmap)
+            VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
         }
-
-        VolleyManager.sendJsonRequest(jsonObject, this@MainActivity)
     }
 }

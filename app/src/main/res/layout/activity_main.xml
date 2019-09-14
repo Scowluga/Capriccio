@@ -7,11 +7,12 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/button"
-        android:text="Select Images"
+        android:id="@+id/upload_images"
+        android:text="Upload Images"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <ScrollView
         android:layout_width="match_parent"
