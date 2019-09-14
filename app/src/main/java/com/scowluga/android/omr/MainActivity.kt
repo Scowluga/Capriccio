@@ -1,17 +1,15 @@
 package com.scowluga.android.omr
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.Button
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -23,33 +21,33 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.ImageView
+import com.google.gson.Gson
+import com.scowluga.android.omr.dialog.DialogActivity
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator
 import org.json.JSONObject
-import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
     companion object {
-        private val REQUEST_CODE = 1
+        val REQUEST_CODE = 1
+
+        // if MainActivity is running
+        var isRunning: Boolean = false
+
+        // -- for parallax header --
+        var appBarExpanded = true
+        var fabShown = true
+        var isAnimating = false
+
+        // tells DialogActivity whether to animate from toolbar of fab
+        var isAddBtnClick = false
+
+        var musicList: MutableList<Music> = ArrayList()
     }
-
-    // if MainActivity is running
-    var isRunning: Boolean = false
-
-    // entire list of routines
-//    var routineList: List<Routine>
 
     // for display of routineList
     lateinit var rv: RecyclerView
-//    lateinit var adapter: RoutineAdapter
-
-    // -- for parallax header --
-    var appBarExpanded = true
-    var fabShown = true
-    var isAnimating = false
-
-    // tells DialogActivity whether to animate from toolbar of fab
-    var isAddBtnClick = false
+    var adapter: MusicAdapter = MusicAdapter(musicList, this)
 
     // views for parallax header
     lateinit var menuAddBtn: ImageButton
@@ -88,9 +86,9 @@ class MainActivity : AppCompatActivity() {
             // Add new routine
             isAddBtnClick = false
 
-//            val intent = Intent(this@MainActivity, DialogActivity::class.java)
-//            val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, fab, getString(R.string.transition_dialog))
-//            startActivityForResult(intent, 100, options.toBundle())
+            val intent = Intent(this@MainActivity, DialogActivity::class.java)
+            val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, fab, getString(R.string.transition_dialog))
+            startActivityForResult(intent, MainActivity.REQUEST_CODE, options.toBundle())
         }
 
 
@@ -99,19 +97,43 @@ class MainActivity : AppCompatActivity() {
         menuAddBtn.setOnClickListener {
             isAddBtnClick = true
 
-//            val intent = Intent(this@MainActivity, DialogActivity::class.java)
-//            val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, menuAddBtn, getString(R.string.transition_dialog))
-//            startActivityForResult(intent, 100, options.toBundle())
+            val intent = Intent(this@MainActivity, DialogActivity::class.java)
+            val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, menuAddBtn, getString(R.string.transition_dialog))
+            startActivityForResult(intent, MainActivity.REQUEST_CODE, options.toBundle())
         }
 
         // init recycler view
-//        rv = findViewById(R.id.recyclerView) as RecyclerView
-//        rv.adapter = RoutineAdapter(ArrayList<Routine>(), this@MainActivity)
-//        rv.layoutManager = LinearLayoutManager(this@MainActivity)
-//
-//        rv.itemAnimator = SlideInDownAnimator()
-//        rv.itemAnimator.addDuration = 500
+        rv = findViewById<RecyclerView>(R.id.recyclerView)
+        rv.adapter = adapter
+        rv.layoutManager = LinearLayoutManager(this@MainActivity)
 
+        rv.itemAnimator = SlideInDownAnimator()
+        rv.itemAnimator.addDuration = 500
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != MainActivity.REQUEST_CODE
+                || resultCode != Activity.RESULT_OK
+                || data == null) return
+
+        val name = data.getStringExtra(DialogActivity.RETURN_MUSIC)
+        val bitmap = DialogActivity.bitmap!!
+
+        val music = Music(name, DialogActivity.bitmap, null)
+
+        Handler().postDelayed({
+            musicList.add(0, music)
+            adapter.notifyItemInserted(0)
+        }, 1000L)
+
+//        VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
+    }
+
+
+    fun resultFromServer(bitmap: Bitmap, jsonObject: JSONObject) {
+//        findViewById<ImageView>(R.id.image_view).setImageBitmap(bitmap)
+//        MIDIManager.playMusic(jsonObject)
     }
 
     // ----- Lifecycle for isRunning -----
@@ -230,28 +252,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onPrepareOptionsMenu(menu)
-    }
-
-
-//        findViewById<Button>(R.id.button).setOnClickListener {
-//            val intent = Intent().apply {
-//                type = "image/*"
-//                action = Intent.ACTION_GET_CONTENT
-//            }
-//            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE)
-//        }
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode != REQUEST_CODE
-//                || resultCode != Activity.RESULT_OK
-//                || data?.data == null) return
-//
-//        val bitmap = UtilTypeConverters.UriToBitmap(data.data, this)
-//        VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
-//    }
-
-    fun resultFromServer(bitmap: Bitmap, jsonObject: JSONObject) {
-//        findViewById<ImageView>(R.id.image_view).setImageBitmap(bitmap)
-//        MIDIManager.playMusic(jsonObject)
     }
 }
