@@ -72,7 +72,7 @@ class DialogActivity : AppCompatActivity() {
             val returnIntent = Intent()
             returnIntent.putExtra(RETURN_MUSIC, nameStr)
             setResult(Activity.RESULT_OK, returnIntent)
-            finish()
+            finishAfterTransition()
         }
     }
 

@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed({
             musicList.add(0, music)
             adapter.notifyItemInserted(0)
-        }, 1000L)
+        }, 300)
 
 //        VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
     }
