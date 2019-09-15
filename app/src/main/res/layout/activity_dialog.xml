@@ -16,7 +16,7 @@
         android:background="@drawable/dialog_background"
         android:id="@+id/container"
 
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
 
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_margin="8dp">
+            android:layout_margin="12dp">
 
             <TextView
                 style="?android:attr/textAppearanceLarge"
@@ -54,8 +54,15 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
+                android:id="@+id/button_take"
+                android:text="Take Photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Colored"/>
+
+            <Button
                 android:id="@+id/button_file"
-                android:text="Select File"
+                android:text="CHoose Photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.Button.Colored"/>

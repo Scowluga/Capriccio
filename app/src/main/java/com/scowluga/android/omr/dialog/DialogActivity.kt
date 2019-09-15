@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.design.widget.TextInputLayout
 import android.transition.ArcMotion
 import android.view.View
@@ -12,16 +13,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.Button
-import com.google.gson.Gson
-import com.scowluga.android.omr.MainActivity
-import com.scowluga.android.omr.Music
 import com.scowluga.android.omr.R
 import com.scowluga.android.omr.UtilTypeConverters
 
 class DialogActivity : AppCompatActivity() {
     companion object {
         val RETURN_MUSIC = "RETURN_MUSIC"
-        val REQUEST_CODE = 2
+        val SELECT_PHOTO = 2
+        val TAKE_PHOTO = 1
 
         var bitmap: Bitmap? = null
     }
@@ -41,13 +40,22 @@ class DialogActivity : AppCompatActivity() {
         val dismissListener = View.OnClickListener { dismiss() }
         container.findViewById<Button>(R.id.button3).setOnClickListener(dismissListener)
 
+        // button for taking picture
+        findViewById<Button>(R.id.button_take).setOnClickListener {
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                takePictureIntent.resolveActivity(packageManager)?.also {
+                    startActivityForResult(takePictureIntent, DialogActivity.TAKE_PHOTO)
+                }
+            }
+        }
+
         // button for selecting file
         findViewById<Button>(R.id.button_file).setOnClickListener {
             val intent = Intent().apply {
                 type = "image/*"
                 action = Intent.ACTION_GET_CONTENT
             }
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), DialogActivity.REQUEST_CODE)
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), DialogActivity.SELECT_PHOTO)
         }
 
         // save button
@@ -78,12 +86,19 @@ class DialogActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != DialogActivity.REQUEST_CODE
-                || resultCode != Activity.RESULT_OK
-                || data?.data == null) return
+        if (resultCode != Activity.RESULT_OK) return
 
-        container.findViewById<Button>(R.id.button2).isEnabled = true
-        bitmap = UtilTypeConverters.UriToBitmap(data.data, this)
+        if (requestCode == TAKE_PHOTO) {
+            if (data == null) return
+            container.findViewById<Button>(R.id.button2).isEnabled = true
+            bitmap = data.extras.get("data") as Bitmap
+        }
+
+        if (requestCode == SELECT_PHOTO) {
+            if (data == null) return
+            container.findViewById<Button>(R.id.button2).isEnabled = true
+            bitmap = UtilTypeConverters.UriToBitmap(data.data, this)
+        }
     }
 
     fun setupTransition() {

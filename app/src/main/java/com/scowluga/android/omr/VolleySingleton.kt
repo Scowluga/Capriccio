@@ -34,9 +34,6 @@ class VolleySingleton constructor(context: Context) {
     }
 
     fun sendBitmapToServer(music: Music, activity: MainActivity) {
-//        val progressBar = activity.findViewById<ProgressBar>(R.id.progress_bar)
-//        progressBar.visibility = View.VISIBLE
-
         val url = "https://radiant-basin-00657.herokuapp.com/api/image"
 
         val jsonObject = JSONObject()
@@ -44,12 +41,10 @@ class VolleySingleton constructor(context: Context) {
 
         val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 Response.Listener { resultJsonObject ->
-//                    progressBar.visibility = View.GONE
                     Log.d("MY_TAG", "Response: ${resultJsonObject.getString("fileName")}")
                     activity.resultFromServer(music, resultJsonObject)
                 },
                 Response.ErrorListener { error ->
-//                    progressBar.visibility = View.GONE
                     Log.d("MY_TAG", "Error: $error")
                 }
         )

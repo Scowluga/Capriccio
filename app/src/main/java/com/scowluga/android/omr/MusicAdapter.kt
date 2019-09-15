@@ -11,8 +11,7 @@ import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
 import android.support.v4.content.FileProvider
-
-
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 /**
@@ -24,12 +23,11 @@ class MusicAdapter(var musicList: List<Music>, var activity: Activity) : Recycle
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var nameTv: TextView
-        var midiButton: Button
-
+        var circularIv: CircleImageView
 
         init {
-            nameTv = itemView.findViewById<TextView>(R.id.nameTv)
-            midiButton = itemView.findViewById<Button>(R.id.midi_button)
+            nameTv = itemView.findViewById<TextView>(R.id.name_tv)
+            circularIv = itemView.findViewById<CircleImageView>(R.id.circular_image)
         }
     }
 
@@ -44,8 +42,9 @@ class MusicAdapter(var musicList: List<Music>, var activity: Activity) : Recycle
         // setting up views
         val music = musicList.get(position)
         holder.nameTv.setText(music.name)
+        holder.circularIv.setImageBitmap(music.bitmap)
 
-        holder.midiButton.setOnClickListener {
+        holder.itemView.setOnClickListener {
             if (music.file == null) return@setOnClickListener
 
             val uri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".fileprovider", music.file!!)
