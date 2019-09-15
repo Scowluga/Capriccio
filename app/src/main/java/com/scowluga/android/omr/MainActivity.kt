@@ -5,6 +5,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -25,6 +26,7 @@ import com.google.gson.Gson
 import com.scowluga.android.omr.dialog.DialogActivity
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator
 import org.json.JSONObject
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -120,20 +122,22 @@ class MainActivity : AppCompatActivity() {
         val name = data.getStringExtra(DialogActivity.RETURN_MUSIC)
         val bitmap = DialogActivity.bitmap!!
 
-        val music = Music(name, DialogActivity.bitmap, null)
+        val music = Music(name, bitmap, null)
 
         Handler().postDelayed({
             musicList.add(0, music)
             adapter.notifyItemInserted(0)
         }, 300)
 
-//        VolleySingleton.getInstance(this).sendBitmapToServer(bitmap, this)
+        VolleySingleton.getInstance(this).sendBitmapToServer(music, this)
     }
 
+    fun resultFromServer(music: Music, jsonObject: JSONObject) {
+        val fileName = jsonObject.getString("fileName")
+        val file = File(filesDir, music.name + ".mid")
+        music.file = file
 
-    fun resultFromServer(bitmap: Bitmap, jsonObject: JSONObject) {
-//        findViewById<ImageView>(R.id.image_view).setImageBitmap(bitmap)
-//        MIDIManager.playMusic(jsonObject)
+        VolleySingleton.getInstance(this).getFileFromServer(fileName, music.name, this)
     }
 
     // ----- Lifecycle for isRunning -----

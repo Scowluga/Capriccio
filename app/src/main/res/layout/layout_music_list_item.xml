@@ -8,7 +8,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="6dp">
+        android:layout_margin="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,6 +23,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 />
+
+            <Button
+                android:id="@+id/midi_button"
+                android:text="midi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
