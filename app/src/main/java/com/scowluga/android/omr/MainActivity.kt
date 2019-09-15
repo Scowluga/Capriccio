@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         // if MainActivity is running
         var isRunning: Boolean = false
 
-        // -- for parallax header --
         var appBarExpanded = true
         var fabShown = true
         var isAnimating = false
@@ -127,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed({
             musicList.add(0, music)
             adapter.notifyItemInserted(0)
-        }, 300)
+        }, 100)
 
         VolleySingleton.getInstance(this).sendBitmapToServer(music, this)
     }
@@ -137,7 +136,11 @@ class MainActivity : AppCompatActivity() {
         val file = File(filesDir, music.name + ".mid")
         music.file = file
 
-        VolleySingleton.getInstance(this).getFileFromServer(fileName, music.name, this)
+        VolleySingleton.getInstance(this).getFileFromServer(music, fileName, this)
+    }
+
+    fun result2FromServer(music: Music) {
+        adapter.notifyItemChanged(musicList.indexOf(music))
     }
 
     // ----- Lifecycle for isRunning -----

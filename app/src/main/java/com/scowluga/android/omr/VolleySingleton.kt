@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import android.widget.ProgressBar
+import android.widget.Toast
 import com.scowluga.android.omr.request.InputStreamVolleyRequest
 import java.io.File
 
@@ -44,29 +45,34 @@ class VolleySingleton constructor(context: Context) {
                     Log.d("MY_TAG", "Response: ${resultJsonObject.getString("fileName")}")
                     activity.resultFromServer(music, resultJsonObject)
                 },
-                Response.ErrorListener { error ->
-                    Log.d("MY_TAG", "Error: $error")
+                Response.ErrorListener { e ->
+                    Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
                 }
         )
         requestQueue.add(jsonObjectRequest)
     }
 
-    fun getFileFromServer(fileName: String, name: String, context: Context) {
+    fun getFileFromServer(music: Music, fileName: String, activity: MainActivity) {
         val url = String.format("https://radiant-basin-00657.herokuapp.com/api/get_image/%s", fileName)
 
-        val req = InputStreamVolleyRequest(Request.Method.GET, url, Response.Listener { res ->
-            try {
-                if (res != null) {
-                    val outputStream = context.openFileOutput(name + ".mid", Context.MODE_PRIVATE)
-                    outputStream.write(res)
-                    outputStream.close()
-                }
-            } catch (e: Exception) {
-                Log.d("KEY_ERROR", "UNABLE TO DOWNLOAD FILE")
-                e.printStackTrace()
-            }
-        }, Response.ErrorListener { e ->
+        val req = InputStreamVolleyRequest(Request.Method.GET, url,
+                Response.Listener { res ->
+                    try {
+                        if (res != null) {
+                            val outputStream = activity.openFileOutput(music.name + ".mid", Context.MODE_PRIVATE)
+                            outputStream.write(res)
+                            outputStream.close()
+                        }
+                        activity.result2FromServer(music)
+                    } catch (e: Exception) {
+                        Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+                        e.printStackTrace()
+                    }
+                }, Response.ErrorListener { e ->
+            Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
             e.printStackTrace()
+
         }, HashMap())
         requestQueue.add(req)
     }

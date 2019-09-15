@@ -60,7 +60,7 @@ class DialogActivity : AppCompatActivity() {
 
         // save button
         val addButton = container.findViewById<Button>(R.id.button2)
-        addButton.isEnabled = false
+        addButton.isEnabled = bitmap != null
         addButton.setOnClickListener {
             // check that all fields are valid
             var complete = true

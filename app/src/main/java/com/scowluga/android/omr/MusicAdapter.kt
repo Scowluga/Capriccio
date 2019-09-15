@@ -10,7 +10,9 @@ import android.widget.TextView
 import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
 import android.support.v4.content.FileProvider
+import android.widget.ProgressBar
 import de.hdodenhof.circleimageview.CircleImageView
 
 
@@ -24,10 +26,12 @@ class MusicAdapter(var musicList: List<Music>, var activity: Activity) : Recycle
 
         var nameTv: TextView
         var circularIv: CircleImageView
+        var progressBar: ProgressBar
 
         init {
             nameTv = itemView.findViewById<TextView>(R.id.name_tv)
             circularIv = itemView.findViewById<CircleImageView>(R.id.circular_image)
+            progressBar = itemView.findViewById<ProgressBar>(R.id.progress_bar)
         }
     }
 
@@ -38,11 +42,25 @@ class MusicAdapter(var musicList: List<Music>, var activity: Activity) : Recycle
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         // setting up views
         val music = musicList.get(position)
-        holder.nameTv.setText(music.name)
+        holder.nameTv.text = music.name
         holder.circularIv.setImageBitmap(music.bitmap)
+
+        val handler = Handler()
+        val delay = 1000L
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                if (music.file == null) {
+                    holder.progressBar.progress = 99
+                } else {
+                    holder.progressBar.progress = 0
+                    holder.progressBar.visibility = View.INVISIBLE
+                }
+                handler.postDelayed(this, delay)
+            }
+        }, delay)
 
         holder.itemView.setOnClickListener {
             if (music.file == null) return@setOnClickListener
