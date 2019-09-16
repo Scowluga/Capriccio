@@ -1,5 +1,6 @@
 package com.scowluga.android.omr
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var collapsingToolbar: CollapsingToolbarLayout
     lateinit var fab: FloatingActionButton
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -79,28 +81,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        collapsingToolbar = findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar)
+        collapsingToolbar = findViewById(R.id.collapsing_toolbar)
 
         // open dialog from fab
-        fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab = findViewById(R.id.fab)
         fab.setOnClickListener {
             // Add new routine
             isAddBtnClick = false
 
             val intent = Intent(this@MainActivity, DialogActivity::class.java)
             val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, fab, getString(R.string.transition_dialog))
-            startActivityForResult(intent, MainActivity.REQUEST_CODE, options.toBundle())
+            startActivityForResult(intent, REQUEST_CODE, options.toBundle())
         }
 
 
         // open dialog from menu
-        menuAddBtn = toolbar.findViewById<ImageButton>(R.id.action_add)
+        menuAddBtn = toolbar.findViewById(R.id.action_add)
         menuAddBtn.setOnClickListener {
             isAddBtnClick = true
 
             val intent = Intent(this@MainActivity, DialogActivity::class.java)
             val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity, menuAddBtn, getString(R.string.transition_dialog))
-            startActivityForResult(intent, MainActivity.REQUEST_CODE, options.toBundle())
+            startActivityForResult(intent, REQUEST_CODE, options.toBundle())
         }
 
         // init recycler view
@@ -114,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != MainActivity.REQUEST_CODE
+        if (requestCode != REQUEST_CODE
                 || resultCode != Activity.RESULT_OK
                 || data == null) return
 
